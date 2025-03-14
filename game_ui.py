@@ -7,6 +7,9 @@ BLACK = (0, 0, 0)
 GRAY = (50, 50, 50)
 TEAL = (115, 199, 199)
 YELLOW = (244, 248, 211)
+PINK = (247, 207, 216)
+LIGHT_TEAL = (166, 241, 224)
+DARK_TEAL = (74,133,135)
 
 class GameGUI:
     def __init__(self):
@@ -15,15 +18,20 @@ class GameGUI:
         pg.display.set_caption("Heart Stopper Minesweeper")
         self.__running = True
         self.__game_started = False
+        self.font = pg.font.Font("font/PixeloidMono.ttf", 25)
+        self.title_font = pg.font.Font("font/PixeloidMono.ttf", 50)
         self.home_screen()
 
     def home_screen(self):
         """Displays the home screen."""
-        font = pg.font.Font(None, 36)
-        text_welcome = font.render("Welcome to Heart Stopper Minesweeper", True, TEAL)
-        text_start_btn = font.render("Start", True, TEAL)
-        text_quit_btn = font.render("Quit", True, TEAL)
+        self.__screen.fill(YELLOW)
+        background_text_rect = pg.Rect(100, 100, 600, 400)
+        pg.draw.rect(self.__screen, WHITE, background_text_rect, border_radius=50)
 
+        # Render text using the preloaded font
+        text_welcome = self.title_font.render("Welcome!", True, DARK_TEAL)
+        text_start_btn = self.font.render("Start", True, YELLOW)
+        text_quit_btn = self.font.render("Quit", True, YELLOW)
 
         self.start_btn = pg.Rect(300, 300, 200, 50)
         self.quit_btn = pg.Rect(300, 400, 200, 50)
@@ -32,11 +40,10 @@ class GameGUI:
         text_start_btn_rect = text_start_btn.get_rect(center=(400, 325))
         text_quit_btn_rect = text_quit_btn.get_rect(center=(400, 425))
 
-        self.__screen.fill(YELLOW)
         self.__screen.blit(text_welcome, text_welcome_rect)
 
-        pg.draw.rect(self.__screen, WHITE, self.start_btn)
-        pg.draw.rect(self.__screen, WHITE, self.quit_btn)
+        pg.draw.rect(self.__screen, TEAL, self.start_btn, border_radius=20)
+        pg.draw.rect(self.__screen, TEAL, self.quit_btn, border_radius=20)
 
         self.__screen.blit(text_start_btn, text_start_btn_rect)
         self.__screen.blit(text_quit_btn, text_quit_btn_rect)
