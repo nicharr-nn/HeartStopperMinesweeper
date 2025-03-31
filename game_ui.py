@@ -20,7 +20,11 @@ class GameGUI:
         pg.display.set_caption("Heart Stopper Minesweeper")
         self.__running = True
         self.__game_started = False
-        # self.player = Player()
+        self.player = Player()
+
+        self.grid_start_x = (750 - GRID_SIZE * TILE_SIZE) // 2
+        self.grid_start_y = (600 - GRID_SIZE * TILE_SIZE) // 2
+        self.tile_states = [[False for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
 
         self.font = pg.font.Font("font/PixeloidMono.ttf", 25)
         self.title_font = pg.font.Font("font/PixeloidMono.ttf", 50)
@@ -81,18 +85,28 @@ class GameGUI:
         # Draw grid
         for x in range(GRID_SIZE):
             for y in range(GRID_SIZE):
-                tile_rect = pg.Rect(grid_start_x + x * (TILE_SIZE+5), grid_start_y + y * (TILE_SIZE+5), TILE_SIZE, TILE_SIZE)
-                pg.draw.rect(self.__screen, LIGHT_PINK, tile_rect, border_radius=5)
+                tile_rect = pg.Rect(self.grid_start_x + x * (TILE_SIZE+5), self.grid_start_y + y * (TILE_SIZE+5), TILE_SIZE, TILE_SIZE)
+                if self.tile_states[x][y]:
+                    pg.draw.rect(self.__screen, LIGHT_TEAL, tile_rect, border_radius=5)  # Revealed color
+                else:
+                    pg.draw.rect(self.__screen, LIGHT_PINK, tile_rect, border_radius=5)  # Unrevealed color
 
         pg.display.update()
 
 
     def handle_click(self, pos):
         """Handles button clicks on the screen."""
-        if self.start_btn.collidepoint(pos):
-            self.__game_started = True
-        elif self.quit_btn.collidepoint(pos):
-            self.__running = False
+        if not self.__game_started:
+            if self.start_btn.collidepoint(pos):
+                self.__game_started = True
+            elif self.quit_btn.collidepoint(pos):
+                self.__running = False
+        else:
+            for x in range(GRID_SIZE):
+                for y in range(GRID_SIZE):
+                    tile_rect = pg.Rect(self.grid_start_x + x * (TILE_SIZE+5), self.grid_start_y + y * (TILE_SIZE+5), TILE_SIZE, TILE_SIZE)
+                    if tile_rect.collidepoint(pos):
+                        self.tile_states[x][y] = True
 
     def game_loop(self):
         """Game loop handling events."""
@@ -100,7 +114,7 @@ class GameGUI:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     self.__running = False
-                elif event.type == pg.MOUSEBUTTONDOWN and not self.__game_started:
+                elif event.type == pg.MOUSEBUTTONDOWN:
                     self.handle_click(event.pos)
 
             if self.__game_started:
