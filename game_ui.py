@@ -22,8 +22,6 @@ class GameGUI:
         self.__game_started = False
         self.player = Player()
 
-        self.grid_start_x = (750 - GRID_SIZE * TILE_SIZE) // 2
-        self.grid_start_y = (600 - GRID_SIZE * TILE_SIZE) // 2
         self.tile_states = [[False for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
 
         self.font = pg.font.Font("font/PixeloidMono.ttf", 25)
@@ -63,7 +61,6 @@ class GameGUI:
 
         pg.display.update()
 
-
     def display_board(self):
         """Renders the grid. Game screen"""
         self.__screen.fill(YELLOW)
@@ -79,8 +76,8 @@ class GameGUI:
         score_text = font.render(f"COUNTDOWN:", True, BLACK)
         self.__screen.blit(score_text, (570, 20))
 
-        grid_start_x = (750 - GRID_SIZE * TILE_SIZE) // 2
-        grid_start_y = (600 - GRID_SIZE * TILE_SIZE) // 2
+        self.grid_start_x = (750 - GRID_SIZE * TILE_SIZE) // 2
+        self.grid_start_y = (600 - GRID_SIZE * TILE_SIZE) // 2
 
         # Draw grid
         for x in range(GRID_SIZE):
@@ -90,9 +87,9 @@ class GameGUI:
                     pg.draw.rect(self.__screen, LIGHT_TEAL, tile_rect, border_radius=5)  # Revealed color
                 else:
                     pg.draw.rect(self.__screen, LIGHT_PINK, tile_rect, border_radius=5)  # Unrevealed color
+                pg.draw.rect(self.__screen, DARK_TEAL, tile_rect, 2, border_radius=5)  # Border
 
         pg.display.update()
-
 
     def handle_click(self, pos):
         """Handles button clicks on the screen."""
