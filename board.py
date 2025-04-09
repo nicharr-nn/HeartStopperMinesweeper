@@ -1,4 +1,3 @@
-import pygame as pg
 from tile import Tile
 from bomb import ClassicBomb, HeartDrainBomb, CountdownBomb
 import random
@@ -41,7 +40,7 @@ class Board:
                         surrounding_bombs += 1
         return surrounding_bombs
 
-    def generate_bomb(self):
+    def generate_bomb(self, classic_img, heart_drain_img, countdown_img):
         bomb_classes = [ClassicBomb, HeartDrainBomb, CountdownBomb]
         bomb_counts = [3, 8, 4]
         positions = random.sample(range(GRID_SIZE * GRID_SIZE), sum(bomb_counts))
@@ -52,13 +51,10 @@ class Board:
                 row = pos // GRID_SIZE
                 col = pos % GRID_SIZE
                 if bomb_cls == ClassicBomb:
-                    bomb_instance = bomb_cls(pg.transform.scale(pg.image.load("image/classic.png"), (
-                    TILE_SIZE, TILE_SIZE)))
+                    bomb_instance = bomb_cls(classic_img)
                 elif bomb_cls == HeartDrainBomb:
-                    bomb_instance = bomb_cls(pg.transform.scale(pg.image.load("image/heartdrain.png"), (
-                    TILE_SIZE, TILE_SIZE)))
+                    bomb_instance = bomb_cls(heart_drain_img)
                 elif bomb_cls == CountdownBomb:
-                    bomb_instance = bomb_cls(
-                        pg.transform.scale(pg.image.load("image/countdown.png"), (TILE_SIZE, TILE_SIZE)))
+                    bomb_instance = bomb_cls(countdown_img)
 
                 self.grid[row][col].set_bomb(bomb_instance)
