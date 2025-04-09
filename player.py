@@ -1,3 +1,6 @@
+import time
+import threading
+
 class Player:
     def __init__(self):
         self.hearts = 3
@@ -14,4 +17,12 @@ class Player:
         self.move_count += 1
 
     def start_countdown(self, duration=10):
-        pass
+        self.countdown = duration
+
+        def countdown_logic():
+            while self.countdown > 0:
+                time.sleep(1)
+                self.countdown -= 1
+            self.hearts = 0
+
+        threading.Thread(target=countdown_logic).start()
