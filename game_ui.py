@@ -15,7 +15,6 @@ DARK_TEAL = (74, 133, 135)
 GRID_SIZE = 10
 TILE_SIZE = 40
 
-
 class GameGUI:
     def __init__(self):
         pg.init()
@@ -41,6 +40,8 @@ class GameGUI:
 
         self.grid_start_x = (750 - GRID_SIZE * TILE_SIZE) // 2
         self.grid_start_y = (600 - GRID_SIZE * TILE_SIZE) // 2
+
+        self.bookmarked_tiles = [[False for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
 
         self.home_screen()
 
@@ -71,10 +72,10 @@ class GameGUI:
         self.screen.blit(self.heart_img, (20, 20))
         hearts_text = self.font.render(f"x {self.player.hearts}", True, BLACK)
         self.screen.blit(hearts_text, (60, 20))
+
         if self.player.hearts == 0:
-            # game_over_text = self.font.render("Game Over", True, BLACK)
-            # self.screen.blit(game_over_text, (game_over_text.get_rect(center=(400, 300))))
-            self.running = False
+            self.game_over()
+            return
 
         countdown_text = self.font.render(f"COUNTDOWN: {self.player.countdown}", True, BLACK)
         self.screen.blit(countdown_text, (570, 20))
@@ -137,6 +138,25 @@ class GameGUI:
                     tile = self.board.grid[r][c]
                     if not tile.is_bomb() and tile.get_surrounding_bombs() == 0:
                         self.flood_fill(r, c)
+
+    def game_over(self):
+        self.screen.fill(YELLOW)
+        pg.draw.rect(self.screen, WHITE, pg.Rect(100, 100, 600, 400), border_radius=50)
+        game_over_text = self.title_font.render("Game Over", True, DARK_TEAL)
+        restart_text = self.font.render("Restart", True, YELLOW)
+        quit_text = self.font.render("Quit", True, YELLOW)
+
+        restart_btn = pg.Rect(300, 300, 200, 50)
+        quit_btn = pg.Rect(300, 400, 200, 50)
+
+        pg.draw.rect(self.screen, TEAL, restart_btn, border_radius=20)
+        pg.draw.rect(self.screen, TEAL, quit_btn, border_radius=20)
+
+        self.screen.blit(game_over_text, game_over_text.get_rect(center=(400, 200)))
+        self.screen.blit(restart_text, restart_text.get_rect(center=(400, 325)))
+        self.screen.blit(quit_text, quit_text.get_rect(center=(400, 425)))
+
+        pg.display.update()
 
     def game_loop(self):
         while self.running:
