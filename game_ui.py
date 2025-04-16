@@ -189,5 +189,9 @@ class GameGUI:
             if self.game_started:
                 self.display_board()
 
+                if self.check_win_condition():
+                    self.win_screen()
+                    self.game_started = False
+
 
         pg.quit()
