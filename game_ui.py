@@ -191,6 +191,3 @@ class GameGUI:
 
 
         pg.quit()
-
-if __name__ == "__main__":
-    GameGUI().game_loop()
