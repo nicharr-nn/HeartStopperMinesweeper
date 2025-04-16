@@ -16,7 +16,7 @@ class Player:
     def increment_move(self):
         self.move_count += 1
 
-    def start_countdown(self, duration=10):
+    def start_countdown(self, duration=30):
         self.countdown = duration
 
         def countdown_logic():
