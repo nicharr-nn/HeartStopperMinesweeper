@@ -24,6 +24,7 @@ class GameGUI:
         self.running = True
         self.game_started = False
         self.start_time = None
+        self.current_screen = "home"
         self.player = Player()
         self.board = Board()
 
@@ -104,24 +105,6 @@ class GameGUI:
 
         pg.display.update()
 
-    def handle_click(self, pos):
-        if not self.game_started:
-            if self.start_btn.collidepoint(pos):
-                self.game_started = True
-            elif self.quit_btn.collidepoint(pos):
-                self.running = False
-        else:
-            for row in range(GRID_SIZE):
-                for col in range(GRID_SIZE):
-                    tile_rect = pg.Rect(
-                        self.grid_start_x + row * (TILE_SIZE + 5),
-                        self.grid_start_y + col * (TILE_SIZE + 5),
-                        TILE_SIZE,
-                        TILE_SIZE,
-                    )
-                    if tile_rect.collidepoint(pos) and not self.tile_states[row][col]:
-                        self.reveal_tile(row, col)
-
     def reveal_tile(self, row, col):
         tile = self.board.grid[row][col]
         self.tile_states[row][col] = True
@@ -153,30 +136,69 @@ class GameGUI:
         return True
 
     def win_screen(self):
+        self.current_screen = "win"
         self.screen.fill(YELLOW)
         pg.draw.rect(self.screen, WHITE, pg.Rect(100, 100, 600, 400), border_radius=50)
         win_text = self.title_font.render("You Win!", True, DARK_TEAL)
-        self.screen.blit(win_text, win_text.get_rect(center=(400, 200)))
+        self.screen.blit(win_text, win_text.get_rect(center=(400, 225)))
+        pg.display.update()
+
+        self.home_btn = pg.Rect(300, 325, 200, 50)
+        pg.draw.rect(self.screen, TEAL, self.home_btn, border_radius=20)
+        home_text = self.font.render("Home", True, YELLOW)
+        self.screen.blit(home_text, home_text.get_rect(center=(400, 350)))
+
         pg.display.update()
 
     def game_over(self):
+        self.current_screen = "game_over"
         self.screen.fill(YELLOW)
         pg.draw.rect(self.screen, WHITE, pg.Rect(100, 100, 600, 400), border_radius=50)
         game_over_text = self.title_font.render("Game Over", True, DARK_TEAL)
-        # home_text = self.font.render("Home", True, YELLOW)
-        # quit_text = self.font.render("Quit", True, YELLOW)
-        #
-        # restart_btn = pg.Rect(300, 300, 200, 50)
-        # quit_btn = pg.Rect(300, 400, 200, 50)
-        #
-        # pg.draw.rect(self.screen, TEAL, restart_btn, border_radius=20)
-        # pg.draw.rect(self.screen, TEAL, quit_btn, border_radius=20)
-        #
-        self.screen.blit(game_over_text, game_over_text.get_rect(center=(400, 200)))
-        # self.screen.blit(home_text, home_text.get_rect(center=(400, 325)))
-        # self.screen.blit(quit_text, quit_text.get_rect(center=(400, 425)))
+        self.screen.blit(game_over_text, game_over_text.get_rect(center=(400, 225)))
+
+        self.home_btn = pg.Rect(300, 325, 200, 50)
+        pg.draw.rect(self.screen, TEAL, self.home_btn, border_radius=20)
+        home_text = self.font.render("Home", True, YELLOW)
+        self.screen.blit(home_text, home_text.get_rect(center=(400, 350)))
 
         pg.display.update()
+
+    def handle_click(self, pos):
+        if self.current_screen == "home":
+            if self.start_btn.collidepoint(pos):
+                self.reset_game()
+                self.current_screen = "game"
+                self.game_started = True
+            elif self.quit_btn.collidepoint(pos):
+                self.running = False
+
+        elif self.current_screen in ["win", "game_over"]:
+            if self.home_btn.collidepoint(pos):
+                self.current_screen = "home"
+                self.game_started = False
+                self.home_screen()
+
+        elif self.current_screen == "game":
+            for row in range(GRID_SIZE):
+                for col in range(GRID_SIZE):
+                    tile_rect = pg.Rect(
+                        self.grid_start_x + row * (TILE_SIZE + 5),
+                        self.grid_start_y + col * (TILE_SIZE + 5),
+                        TILE_SIZE,
+                        TILE_SIZE,
+                    )
+                    if tile_rect.collidepoint(pos) and not self.tile_states[row][col]:
+                        self.reveal_tile(row, col)
+
+    def reset_game(self):
+        self.player = Player()
+        self.board = Board()
+        self.board.generate_bomb(self.classic_bomb_img, self.heartdrain_bomb_img, self.countdown_bomb_img)
+        self.board.set_surrounding_bombs()
+        self.tile_states = [[False for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
+        self.bookmarked_tiles = [[False for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
+        self.game_started = False
 
     def game_loop(self):
         while self.running:
@@ -186,12 +208,10 @@ class GameGUI:
                 elif event.type == pg.MOUSEBUTTONDOWN:
                     self.handle_click(event.pos)
 
-            if self.game_started:
+            if self.current_screen == "game":
                 self.display_board()
-
                 if self.check_win_condition():
                     self.win_screen()
                     self.game_started = False
-
 
         pg.quit()
