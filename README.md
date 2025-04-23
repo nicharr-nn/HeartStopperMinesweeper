@@ -29,6 +29,10 @@ cd HeartStopperMinesweeper
 ```bash
 python -m venv venv
 ```
+or (MacOS)
+```bash
+python3 -m venv venv
+```
 4. Activate the virtual environment by running the following command in the terminal:
 
 MacOS or Linux:
