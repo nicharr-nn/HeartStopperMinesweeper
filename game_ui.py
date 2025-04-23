@@ -1,7 +1,6 @@
 import pygame as pg
 import csv
 import os
-import time
 from player import Player
 from board import Board
 
