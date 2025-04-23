@@ -1,4 +1,7 @@
 import pygame as pg
+import csv
+import os
+import time
 from player import Player
 from board import Board
 
@@ -24,6 +27,7 @@ class GameGUI:
         self.running = True
         self.game_started = False
         self.start_time = None
+        self.fail_reason = None
         self.current_screen = "home"
         self.player = Player()
         self.board = Board()
@@ -74,14 +78,20 @@ class GameGUI:
         self.screen.blit(self.heart_img, (20, 20))
         hearts_text = self.font.render(f"x {self.player.hearts}", True, BLACK)
         self.screen.blit(hearts_text, (60, 20))
+        moves_text = self.font.render(f"Moves: {self.player.move_count}", True, BLACK)
+        self.screen.blit(moves_text, (250, 20))
+
+        current_time = pg.time.get_ticks()
+        elapsed_seconds = (current_time - self.start_time) // 1000
+        time_text = self.font.render(f"Time: {elapsed_seconds} s", True, BLACK)
+        self.screen.blit(time_text, (320, 550))
 
         if self.player.hearts == 0:
             self.game_over()
             return
 
-        countdown_text = self.font.render(f"COUNTDOWN: {self.player.countdown}", True, BLACK)
+        countdown_text = self.font.render(f"Countdown: {self.player.countdown}", True, BLACK)
         self.screen.blit(countdown_text, (570, 20))
-
 
         for row in range(GRID_SIZE):
             for col in range(GRID_SIZE):
@@ -110,7 +120,10 @@ class GameGUI:
         self.tile_states[row][col] = True
 
         if tile.is_bomb():
-            tile.get_bomb_type().trigger_effect(self.player)
+            bomb = tile.get_bomb_type()
+            bomb.trigger_effect(self.player)
+            if self.player.hearts <= 0:
+                self.fail_reason = bomb.__class__.__name__
         elif tile.get_surrounding_bombs() == 0:
             self.flood_fill(row, col)
 
@@ -136,6 +149,10 @@ class GameGUI:
         return True
 
     def win_screen(self):
+        end_time = pg.time.get_ticks()
+        self.time_taken = (end_time - self.start_time) // 1000
+        self.game_result_data("win")
+
         self.current_screen = "win"
         self.screen.fill(YELLOW)
         pg.draw.rect(self.screen, WHITE, pg.Rect(100, 100, 600, 400), border_radius=50)
@@ -151,6 +168,10 @@ class GameGUI:
         pg.display.update()
 
     def game_over(self):
+        end_time = pg.time.get_ticks()
+        self.time_taken = (end_time - self.start_time) // 1000
+        self.game_result_data("lose")
+
         self.current_screen = "game_over"
         self.screen.fill(YELLOW)
         pg.draw.rect(self.screen, WHITE, pg.Rect(100, 100, 600, 400), border_radius=50)
@@ -170,6 +191,7 @@ class GameGUI:
                 self.reset_game()
                 self.current_screen = "game"
                 self.game_started = True
+                self.start_time = pg.time.get_ticks()
             elif self.quit_btn.collidepoint(pos):
                 self.running = False
 
@@ -189,6 +211,7 @@ class GameGUI:
                         TILE_SIZE,
                     )
                     if tile_rect.collidepoint(pos) and not self.tile_states[row][col]:
+                        self.player.increment_move()
                         self.reveal_tile(row, col)
 
     def reset_game(self):
@@ -215,3 +238,21 @@ class GameGUI:
                     self.game_started = False
 
         pg.quit()
+
+    def game_result_data(self, result):
+        next_id = 1
+        file_path = "game_results.csv"
+        if os.path.exists(file_path):
+            with open(file_path, mode="r") as file:
+                lines = file.readlines()
+                if len(lines) > 0:
+                    last_line = lines[-1]
+                    try:
+                        last_id = int(last_line.split(",")[0])
+                        next_id = last_id + 1
+                    except (ValueError, IndexError):
+                        next_id = 1
+        with open(file_path, mode="a", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow([next_id, self.player.move_count, 3 - self.player.hearts, self.time_taken, self.fail_reason, result])
+
