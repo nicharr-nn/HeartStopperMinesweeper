@@ -121,7 +121,6 @@ class GameGUI:
         if tile.is_bomb():
             bomb = tile.get_bomb_type()
             bomb.trigger_effect(self.player)
-            print('player hearts:', self.player.hearts)
             if self.player.hearts <= 0:
                 self.fail_reason = bomb.__class__.__name__
             elif self.player.countdown_event.is_set() and self.current_screen == "game":
