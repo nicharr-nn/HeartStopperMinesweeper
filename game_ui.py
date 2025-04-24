@@ -123,6 +123,10 @@ class GameGUI:
             bomb.trigger_effect(self.player)
             if self.player.hearts <= 0:
                 self.fail_reason = bomb.__class__.__name__
+            if self.player.countdown_event.is_set() and self.current_screen == "game":
+                self.fail_reason = "CountdownBomb"
+                self.game_over()
+
         elif tile.get_surrounding_bombs() == 0:
             self.flood_fill(row, col)
 
@@ -231,6 +235,11 @@ class GameGUI:
                     self.handle_click(event.pos)
 
             if self.current_screen == "game":
+                if self.player.countdown_event.is_set():
+                    self.fail_reason = "CountdownBomb"
+                    self.game_over()
+                    continue
+
                 self.display_board()
                 if self.check_win_condition():
                     self.win_screen()
