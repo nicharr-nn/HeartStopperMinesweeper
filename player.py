@@ -7,6 +7,7 @@ class Player:
         self.countdown = 30
         self.countdown_active = False
         self.move_count = 0
+        self.countdown_event = threading.Event()
 
     def lose_heart(self):
         self.hearts -= 1
@@ -30,5 +31,7 @@ class Player:
                 self.countdown -= 1
             if self.countdown <= 0:
                 self.hearts = 0
+                self.countdown_event.set()
 
-        threading.Thread(target=countdown_logic, daemon=True).start()
+        thread = threading.Thread(target=countdown_logic, daemon=True)
+        thread.start()
