@@ -1,6 +1,7 @@
 import pygame as pg
 import csv
 import os
+from graph import Graph
 from player import Player
 from board import Board
 
@@ -30,6 +31,7 @@ class GameGUI:
         self.current_screen = "home"
         self.player = Player()
         self.board = Board()
+        self.graph = Graph()
 
         self.tile_states = [[False for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
         self.font = pg.font.Font("font/PixeloidMono.ttf", 25)
@@ -55,19 +57,27 @@ class GameGUI:
 
         pg.draw.rect(self.screen, WHITE, pg.Rect(100, 100, 600, 400), border_radius=50)
         welcome = self.title_font.render("Welcome!", True, DARK_TEAL)
-        start = self.font.render("Start", True, YELLOW)
-        quit_btn = self.font.render("Quit", True, YELLOW)
+        start_txt = self.font.render("Start", True, YELLOW)
+        graph_txt = self.font.render("Graphs", True, YELLOW)
+        stat_txt = self.font.render("Statistics", True, YELLOW)
+        quit_txt = self.font.render("Quit", True, YELLOW)
 
-        self.start_btn = pg.Rect(300, 300, 200, 50)
+        self.start_btn = pg.Rect(300, 220, 200, 50)
+        self.graph_btn = pg.Rect(300, 280, 200, 50)
+        self.stat_btn = pg.Rect(300, 340, 200, 50)
         self.quit_btn = pg.Rect(300, 400, 200, 50)
 
-        self.screen.blit(welcome, welcome.get_rect(center=(400, 200)))
+        self.screen.blit(welcome, welcome.get_rect(center=(400, 180)))
 
         pg.draw.rect(self.screen, TEAL, self.start_btn, border_radius=20)
         pg.draw.rect(self.screen, TEAL, self.quit_btn, border_radius=20)
+        pg.draw.rect(self.screen, TEAL, self.graph_btn, border_radius=20)
+        pg.draw.rect(self.screen, TEAL, self.stat_btn, border_radius=20)
 
-        self.screen.blit(start, start.get_rect(center=(400, 325)))
-        self.screen.blit(quit_btn, quit_btn.get_rect(center=(400, 425)))
+        self.screen.blit(start_txt, start_txt.get_rect(center=self.start_btn.center))
+        self.screen.blit(quit_txt, quit_txt.get_rect(center=self.quit_btn.center))
+        self.screen.blit(graph_txt, graph_txt.get_rect(center=self.graph_btn.center))
+        self.screen.blit(stat_txt, stat_txt.get_rect(center=self.stat_btn.center))
 
         pg.display.update()
 
@@ -189,6 +199,98 @@ class GameGUI:
 
         pg.display.update()
 
+    def reset_game(self):
+        self.player = Player()
+        self.board = Board()
+        self.board.generate_bomb(self.classic_bomb_img, self.heartdrain_bomb_img, self.countdown_bomb_img)
+        self.board.set_surrounding_bombs()
+        self.tile_states = [[False for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
+        self.bookmarked_tiles = [[False for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
+        self.game_started = False
+
+    def game_result_data(self, result):
+        next_id = 1
+        file_path = "game_results.csv"
+        if os.path.exists(file_path):
+            with open(file_path, mode="r") as file:
+                lines = file.readlines()
+                if len(lines) > 0:
+                    last_line = lines[-1]
+                    try:
+                        last_id = int(last_line.split(",")[0])
+                        next_id = last_id + 1
+                    except (ValueError, IndexError):
+                        next_id = 1
+        with open(file_path, mode="a", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow([next_id, self.player.move_count, 3 - self.player.hearts, self.time_taken, self.fail_reason, result])
+
+    def graph_screen(self):
+        self.current_screen = "graph"
+        self.screen.fill(YELLOW)
+        pg.draw.rect(self.screen, WHITE, pg.Rect(100, 100, 600, 400), border_radius=50)
+
+        move_hist = self.font.render("Move Count Histogram", True, YELLOW)
+        self.move_hist_btn = pg.Rect(175, 150, 450, 40)
+        pg.draw.rect(self.screen, TEAL, self.move_hist_btn, border_radius=20)
+        self.screen.blit(move_hist, move_hist.get_rect(center=self.move_hist_btn.center))
+
+        hearts_bar = self.font.render("Hearts Lost Bar Chart", True, YELLOW)
+        self.hearts_bar_btn = pg.Rect(175, 200, 450, 40)
+        pg.draw.rect(self.screen, TEAL, self.hearts_bar_btn, border_radius=20)
+        self.screen.blit(hearts_bar, hearts_bar.get_rect(center=self.hearts_bar_btn.center))
+
+        time_box = self.font.render("Time Taken Box Plot", True, YELLOW)
+        self.time_box_btn = pg.Rect(175, 250, 450, 40)
+        pg.draw.rect(self.screen, TEAL, self.time_box_btn, border_radius=20)
+        self.screen.blit(time_box, time_box.get_rect(center=self.time_box_btn.center))
+
+        countdown_pie = self.font.render("Countdown Bomb Pie Chart", True, YELLOW)
+        self.countdown_pie_btn = pg.Rect(175, 300, 450, 40)
+        pg.draw.rect(self.screen, TEAL, self.countdown_pie_btn, border_radius=20)
+        self.screen.blit(countdown_pie, countdown_pie.get_rect(center=self.countdown_pie_btn.center))
+
+        win_loss_pie = self.font.render("Win/Loss Pie Chart", True, YELLOW)
+        self.win_loss_pie_btn = pg.Rect(175, 350, 450, 40)
+        pg.draw.rect(self.screen, TEAL, self.win_loss_pie_btn, border_radius=20)
+        self.screen.blit(win_loss_pie, win_loss_pie.get_rect(center=self.win_loss_pie_btn.center))
+
+        back_text = self.font.render("Back", True, YELLOW)
+        self.back_btn = pg.Rect(175, 400, 450, 40)
+        pg.draw.rect(self.screen, TEAL, self.back_btn, border_radius=20)
+        self.screen.blit(back_text, back_text.get_rect(center=self.back_btn.center))
+
+        pg.display.update()
+
+    def show_graph(self, graph_type):
+        if graph_type == "histogram_moves":
+            img = pg.image.load("image/graphs/histogram_moves.png")
+            img = pg.transform.scale(img, (600, 400))
+        elif graph_type == "bar_hearts_lost":
+            img = pg.image.load("image/graphs/bar_hearts_lost.png")
+            img = pg.transform.scale(img, (600, 400))
+        elif graph_type == "box_time_taken":
+            img = pg.image.load("image/graphs/box_time_taken.png")
+            img = pg.transform.scale(img, (600, 400))
+        elif graph_type == "pie_countdown_fail":
+            img = pg.image.load("image/graphs/pie_countdown_fail.png")
+            img = pg.transform.scale(img, (600, 400))
+        elif graph_type == "pie_win_loss":
+            img = pg.image.load("image/graphs/pie_win_loss.png")
+            img = pg.transform.scale(img, (600, 400))
+        else:
+            return
+
+        self.screen.fill(YELLOW)
+        self.screen.blit(img, (100, 100))
+
+        self.back_btn = pg.Rect(300, 520, 200, 40)
+        back_text = self.font.render("Back", True, YELLOW)
+        pg.draw.rect(self.screen, TEAL, self.back_btn, border_radius=20)
+        self.screen.blit(back_text, back_text.get_rect(center=self.back_btn.center))
+
+        pg.display.update()
+
     def handle_click(self, pos):
         if self.current_screen == "home":
             if self.start_btn.collidepoint(pos):
@@ -198,6 +300,8 @@ class GameGUI:
                 self.start_time = pg.time.get_ticks()
             elif self.quit_btn.collidepoint(pos):
                 self.running = False
+            elif self.graph_btn.collidepoint(pos):
+                self.graph_screen()
 
         elif self.current_screen in ["win", "game_over"]:
             if self.home_btn.collidepoint(pos):
@@ -218,14 +322,24 @@ class GameGUI:
                         self.player.increment_move()
                         self.reveal_tile(row, col)
 
-    def reset_game(self):
-        self.player = Player()
-        self.board = Board()
-        self.board.generate_bomb(self.classic_bomb_img, self.heartdrain_bomb_img, self.countdown_bomb_img)
-        self.board.set_surrounding_bombs()
-        self.tile_states = [[False for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
-        self.bookmarked_tiles = [[False for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
-        self.game_started = False
+        elif self.current_screen == "graph":
+            if self.move_hist_btn.collidepoint(pos):
+                self.graph.histogram_moves()
+                self.show_graph("histogram_moves")
+            elif self.hearts_bar_btn.collidepoint(pos):
+                self.graph.bar_hearts_lost()
+                self.show_graph("bar_hearts_lost")
+            elif self.time_box_btn.collidepoint(pos):
+                self.graph.box_time_taken()
+                self.show_graph("box_time_taken")
+            elif self.countdown_pie_btn.collidepoint(pos):
+                self.graph.pie_countdown_fail()
+                self.show_graph("pie_countdown_fail")
+            elif self.win_loss_pie_btn.collidepoint(pos):
+                self.graph.pie_win_loss()
+                self.show_graph("pie_win_loss")
+            elif hasattr(self, 'back_btn') and self.back_btn.collidepoint(pos):
+                self.graph_screen()
 
     def game_loop(self):
         while self.running:
@@ -248,21 +362,3 @@ class GameGUI:
                     self.game_started = False
 
         pg.quit()
-
-    def game_result_data(self, result):
-        next_id = 1
-        file_path = "game_results.csv"
-        if os.path.exists(file_path):
-            with open(file_path, mode="r") as file:
-                lines = file.readlines()
-                if len(lines) > 0:
-                    last_line = lines[-1]
-                    try:
-                        last_id = int(last_line.split(",")[0])
-                        next_id = last_id + 1
-                    except (ValueError, IndexError):
-                        next_id = 1
-        with open(file_path, mode="a", newline="") as file:
-            writer = csv.writer(file)
-            writer.writerow([next_id, self.player.move_count, 3 - self.player.hearts, self.time_taken, self.fail_reason, result])
-
