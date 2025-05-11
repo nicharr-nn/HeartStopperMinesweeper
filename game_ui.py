@@ -1,22 +1,10 @@
-import pygame as pg
-import csv
 import os
-from graph import Graph
+import csv
+import constants
+import pygame as pg
 from player import Player
 from board import Board
-
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-GRAY = (50, 50, 50)
-TEAL = (115, 199, 199)
-YELLOW = (244, 248, 211)
-PINK = (247, 207, 216)
-LIGHT_PINK = (253, 223, 229)
-LIGHT_TEAL = (166, 241, 224)
-DARK_TEAL = (74, 133, 135)
-
-GRID_SIZE = 10
-TILE_SIZE = 40
+from visualizer import Visualizer
 
 class GameGUI:
     def __init__(self):
@@ -31,36 +19,36 @@ class GameGUI:
         self.current_screen = "home"
         self.player = Player()
         self.board = Board()
-        self.graph = Graph()
+        self.graph = Visualizer()
 
-        self.tile_states = [[False for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
+        self.tile_states = [[False for _ in range(constants.GRID_SIZE)] for _ in range(constants.GRID_SIZE)]
         self.font = pg.font.Font("font/PixeloidMono.ttf", 25)
         self.title_font = pg.font.Font("font/PixeloidMono.ttf", 50)
 
-        self.classic_bomb_img = pg.transform.scale(pg.image.load("image/classic.png"), (TILE_SIZE, TILE_SIZE))
-        self.heartdrain_bomb_img = pg.transform.scale(pg.image.load("image/heartdrain.png"), (TILE_SIZE, TILE_SIZE))
-        self.countdown_bomb_img = pg.transform.scale(pg.image.load("image/countdown.png"), (TILE_SIZE, TILE_SIZE))
+        self.classic_bomb_img = pg.transform.scale(pg.image.load("image/classic.png"), (constants.TILE_SIZE, constants.TILE_SIZE))
+        self.heartdrain_bomb_img = pg.transform.scale(pg.image.load("image/heartdrain.png"), (constants.TILE_SIZE, constants.TILE_SIZE))
+        self.countdown_bomb_img = pg.transform.scale(pg.image.load("image/countdown.png"), (constants.TILE_SIZE, constants.TILE_SIZE))
         self.board.generate_bomb(self.classic_bomb_img, self.heartdrain_bomb_img, self.countdown_bomb_img)
         self.board.set_surrounding_bombs()
 
         self.heart_img = pg.transform.scale(pg.image.load("image/heart.png"), (30, 30))
 
-        self.grid_start_x = (750 - GRID_SIZE * TILE_SIZE) // 2
-        self.grid_start_y = (600 - GRID_SIZE * TILE_SIZE) // 2
+        self.grid_start_x = (750 - constants.GRID_SIZE * constants.TILE_SIZE) // 2
+        self.grid_start_y = (600 - constants.GRID_SIZE * constants.TILE_SIZE) // 2
 
-        self.bookmarked_tiles = [[False for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
+        self.bookmarked_tiles = [[False for _ in range(constants.GRID_SIZE)] for _ in range(constants.GRID_SIZE)]
 
         self.home_screen()
 
     def home_screen(self):
-        self.screen.fill(YELLOW)
+        self.screen.fill(constants.YELLOW)
 
-        pg.draw.rect(self.screen, WHITE, pg.Rect(100, 100, 600, 400), border_radius=50)
-        welcome = self.title_font.render("Welcome!", True, DARK_TEAL)
-        start_txt = self.font.render("Start", True, YELLOW)
-        graph_txt = self.font.render("Graphs", True, YELLOW)
-        stat_txt = self.font.render("Statistics", True, YELLOW)
-        quit_txt = self.font.render("Quit", True, YELLOW)
+        pg.draw.rect(self.screen, constants.WHITE, pg.Rect(100, 100, 600, 400), border_radius=50)
+        welcome = self.title_font.render("Welcome!", True, constants.DARK_TEAL)
+        start_txt = self.font.render("Start", True, constants.YELLOW)
+        graph_txt = self.font.render("Graphs", True, constants.YELLOW)
+        stat_txt = self.font.render("Statistics", True, constants.YELLOW)
+        quit_txt = self.font.render("Quit", True, constants.YELLOW)
 
         self.start_btn = pg.Rect(300, 220, 200, 50)
         self.graph_btn = pg.Rect(300, 280, 200, 50)
@@ -69,10 +57,10 @@ class GameGUI:
 
         self.screen.blit(welcome, welcome.get_rect(center=(400, 180)))
 
-        pg.draw.rect(self.screen, TEAL, self.start_btn, border_radius=20)
-        pg.draw.rect(self.screen, TEAL, self.quit_btn, border_radius=20)
-        pg.draw.rect(self.screen, TEAL, self.graph_btn, border_radius=20)
-        pg.draw.rect(self.screen, TEAL, self.stat_btn, border_radius=20)
+        pg.draw.rect(self.screen, constants.TEAL, self.start_btn, border_radius=20)
+        pg.draw.rect(self.screen, constants.TEAL, self.quit_btn, border_radius=20)
+        pg.draw.rect(self.screen, constants.TEAL, self.graph_btn, border_radius=20)
+        pg.draw.rect(self.screen, constants.TEAL, self.stat_btn, border_radius=20)
 
         self.screen.blit(start_txt, start_txt.get_rect(center=self.start_btn.center))
         self.screen.blit(quit_txt, quit_txt.get_rect(center=self.quit_btn.center))
@@ -82,45 +70,45 @@ class GameGUI:
         pg.display.update()
 
     def display_board(self):
-        self.screen.fill(YELLOW)
+        self.screen.fill(constants.YELLOW)
 
         self.screen.blit(self.heart_img, (20, 20))
-        hearts_text = self.font.render(f"x {self.player.hearts}", True, BLACK)
+        hearts_text = self.font.render(f"x {self.player.hearts}", True, constants.BLACK)
         self.screen.blit(hearts_text, (60, 20))
-        moves_text = self.font.render(f"Moves: {self.player.move_count}", True, BLACK)
+        moves_text = self.font.render(f"Moves: {self.player.move_count}", True, constants.BLACK)
         self.screen.blit(moves_text, (250, 20))
 
         current_time = pg.time.get_ticks()
         elapsed_seconds = (current_time - self.start_time) // 1000
-        time_text = self.font.render(f"Time: {elapsed_seconds} s", True, BLACK)
+        time_text = self.font.render(f"Time: {elapsed_seconds} s", True, constants.BLACK)
         self.screen.blit(time_text, (320, 550))
 
         if self.player.hearts == 0:
             self.game_over()
             return
 
-        countdown_text = self.font.render(f"Countdown: {self.player.countdown}", True, BLACK)
+        countdown_text = self.font.render(f"Countdown: {self.player.countdown}", True, constants.BLACK)
         self.screen.blit(countdown_text, (570, 20))
 
-        for row in range(GRID_SIZE):
-            for col in range(GRID_SIZE):
-                tile_x = self.grid_start_x + row * (TILE_SIZE + 5)
-                tile_y = self.grid_start_y + col * (TILE_SIZE + 5)
-                tile_rect = pg.Rect(tile_x, tile_y, TILE_SIZE, TILE_SIZE)
+        for row in range(constants.GRID_SIZE):
+            for col in range(constants.GRID_SIZE):
+                tile_x = self.grid_start_x + row * (constants.TILE_SIZE + 5)
+                tile_y = self.grid_start_y + col * (constants.TILE_SIZE + 5)
+                tile_rect = pg.Rect(tile_x, tile_y, constants.TILE_SIZE, constants.TILE_SIZE)
 
                 if self.tile_states[row][col]:
-                    pg.draw.rect(self.screen, LIGHT_TEAL, tile_rect, border_radius=5)
+                    pg.draw.rect(self.screen, constants.LIGHT_TEAL, tile_rect, border_radius=5)
                     tile = self.board.grid[row][col]
                     if tile.is_bomb():
                         bomb = tile.get_bomb_type()
                         self.screen.blit(bomb.bomb_img, (tile_x, tile_y))
                     elif tile.get_surrounding_bombs() > 0:
-                        text = self.font.render(str(tile.get_surrounding_bombs()), True, BLACK)
+                        text = self.font.render(str(tile.get_surrounding_bombs()), True, constants.BLACK)
                         self.screen.blit(text, text.get_rect(center=tile_rect.center))
                 else:
-                    pg.draw.rect(self.screen, LIGHT_PINK, tile_rect, border_radius=5)
+                    pg.draw.rect(self.screen, constants.LIGHT_PINK, tile_rect, border_radius=5)
 
-                pg.draw.rect(self.screen, DARK_TEAL, tile_rect, 2, border_radius=5)
+                pg.draw.rect(self.screen, constants.DARK_TEAL, tile_rect, 2, border_radius=5)
 
         pg.display.update()
 
@@ -148,15 +136,15 @@ class GameGUI:
         for dr in range(-1, 2):
             for dc in range(-1, 2):
                 r, c = row + dr, col + dc
-                if 0 <= r < GRID_SIZE and 0 <= c < GRID_SIZE and not self.tile_states[r][c]:
+                if 0 <= r < constants.GRID_SIZE and 0 <= c < constants.GRID_SIZE and not self.tile_states[r][c]:
                     self.tile_states[r][c] = True
                     tile = self.board.grid[r][c]
                     if not tile.is_bomb() and tile.get_surrounding_bombs() == 0:
                         self.flood_fill(r, c)
 
     def check_win_condition(self):
-        for row in range(GRID_SIZE):
-            for col in range(GRID_SIZE):
+        for row in range(constants.GRID_SIZE):
+            for col in range(constants.GRID_SIZE):
                 tile = self.board.grid[row][col]
                 if not tile.is_bomb() and not self.tile_states[row][col]:
                     return False
@@ -168,15 +156,15 @@ class GameGUI:
         self.game_result_data("win")
 
         self.current_screen = "win"
-        self.screen.fill(YELLOW)
-        pg.draw.rect(self.screen, WHITE, pg.Rect(100, 100, 600, 400), border_radius=50)
-        win_text = self.title_font.render("You Win!", True, DARK_TEAL)
+        self.screen.fill(constants.YELLOW)
+        pg.draw.rect(self.screen, constants.WHITE, pg.Rect(100, 100, 600, 400), border_radius=50)
+        win_text = self.title_font.render("You Win!", True, constants.DARK_TEAL)
         self.screen.blit(win_text, win_text.get_rect(center=(400, 225)))
         pg.display.update()
 
         self.home_btn = pg.Rect(300, 325, 200, 50)
-        pg.draw.rect(self.screen, TEAL, self.home_btn, border_radius=20)
-        home_text = self.font.render("Home", True, YELLOW)
+        pg.draw.rect(self.screen, constants.TEAL, self.home_btn, border_radius=20)
+        home_text = self.font.render("Home", True, constants.YELLOW)
         self.screen.blit(home_text, home_text.get_rect(center=(400, 350)))
 
         pg.display.update()
@@ -187,14 +175,14 @@ class GameGUI:
         self.game_result_data("lose")
 
         self.current_screen = "game_over"
-        self.screen.fill(YELLOW)
-        pg.draw.rect(self.screen, WHITE, pg.Rect(100, 100, 600, 400), border_radius=50)
-        game_over_text = self.title_font.render("Game Over", True, DARK_TEAL)
+        self.screen.fill(constants.YELLOW)
+        pg.draw.rect(self.screen, constants.WHITE, pg.Rect(100, 100, 600, 400), border_radius=50)
+        game_over_text = self.title_font.render("Game Over", True, constants.DARK_TEAL)
         self.screen.blit(game_over_text, game_over_text.get_rect(center=(400, 225)))
 
         self.home_btn = pg.Rect(300, 325, 200, 50)
-        pg.draw.rect(self.screen, TEAL, self.home_btn, border_radius=20)
-        home_text = self.font.render("Home", True, YELLOW)
+        pg.draw.rect(self.screen, constants.TEAL, self.home_btn, border_radius=20)
+        home_text = self.font.render("Home", True, constants.YELLOW)
         self.screen.blit(home_text, home_text.get_rect(center=(400, 350)))
 
         pg.display.update()
@@ -204,8 +192,8 @@ class GameGUI:
         self.board = Board()
         self.board.generate_bomb(self.classic_bomb_img, self.heartdrain_bomb_img, self.countdown_bomb_img)
         self.board.set_surrounding_bombs()
-        self.tile_states = [[False for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
-        self.bookmarked_tiles = [[False for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
+        self.tile_states = [[False for _ in range(constants.GRID_SIZE)] for _ in range(constants.GRID_SIZE)]
+        self.bookmarked_tiles = [[False for _ in range(constants.GRID_SIZE)] for _ in range(constants.GRID_SIZE)]
         self.game_started = False
 
     def game_result_data(self, result):
@@ -227,37 +215,37 @@ class GameGUI:
 
     def graph_screen(self):
         self.current_screen = "graph"
-        self.screen.fill(YELLOW)
-        pg.draw.rect(self.screen, WHITE, pg.Rect(100, 100, 600, 400), border_radius=50)
+        self.screen.fill(constants.YELLOW)
+        pg.draw.rect(self.screen, constants.WHITE, pg.Rect(100, 100, 600, 400), border_radius=50)
 
-        move_hist = self.font.render("Move Count Histogram", True, YELLOW)
+        move_hist = self.font.render("Move Count Histogram", True, constants.YELLOW)
         self.move_hist_btn = pg.Rect(175, 150, 450, 40)
-        pg.draw.rect(self.screen, TEAL, self.move_hist_btn, border_radius=20)
+        pg.draw.rect(self.screen, constants.TEAL, self.move_hist_btn, border_radius=20)
         self.screen.blit(move_hist, move_hist.get_rect(center=self.move_hist_btn.center))
 
-        hearts_bar = self.font.render("Hearts Lost Bar Chart", True, YELLOW)
+        hearts_bar = self.font.render("Hearts Lost Bar Chart", True, constants.YELLOW)
         self.hearts_bar_btn = pg.Rect(175, 200, 450, 40)
-        pg.draw.rect(self.screen, TEAL, self.hearts_bar_btn, border_radius=20)
+        pg.draw.rect(self.screen, constants.TEAL, self.hearts_bar_btn, border_radius=20)
         self.screen.blit(hearts_bar, hearts_bar.get_rect(center=self.hearts_bar_btn.center))
 
-        time_box = self.font.render("Time Taken Box Plot", True, YELLOW)
+        time_box = self.font.render("Time Taken Box Plot", True, constants.YELLOW)
         self.time_box_btn = pg.Rect(175, 250, 450, 40)
-        pg.draw.rect(self.screen, TEAL, self.time_box_btn, border_radius=20)
+        pg.draw.rect(self.screen, constants.TEAL, self.time_box_btn, border_radius=20)
         self.screen.blit(time_box, time_box.get_rect(center=self.time_box_btn.center))
 
-        countdown_pie = self.font.render("Countdown Bomb Pie Chart", True, YELLOW)
+        countdown_pie = self.font.render("Countdown Bomb Pie Chart", True, constants.YELLOW)
         self.countdown_pie_btn = pg.Rect(175, 300, 450, 40)
-        pg.draw.rect(self.screen, TEAL, self.countdown_pie_btn, border_radius=20)
+        pg.draw.rect(self.screen, constants.TEAL, self.countdown_pie_btn, border_radius=20)
         self.screen.blit(countdown_pie, countdown_pie.get_rect(center=self.countdown_pie_btn.center))
 
-        win_loss_pie = self.font.render("Win/Loss Pie Chart", True, YELLOW)
+        win_loss_pie = self.font.render("Win/Loss Pie Chart", True, constants.YELLOW)
         self.win_loss_pie_btn = pg.Rect(175, 350, 450, 40)
-        pg.draw.rect(self.screen, TEAL, self.win_loss_pie_btn, border_radius=20)
+        pg.draw.rect(self.screen, constants.TEAL, self.win_loss_pie_btn, border_radius=20)
         self.screen.blit(win_loss_pie, win_loss_pie.get_rect(center=self.win_loss_pie_btn.center))
 
-        back_text = self.font.render("Back", True, YELLOW)
+        back_text = self.font.render("Back", True, constants.YELLOW)
         self.back_btn = pg.Rect(175, 400, 450, 40)
-        pg.draw.rect(self.screen, TEAL, self.back_btn, border_radius=20)
+        pg.draw.rect(self.screen, constants.TEAL, self.back_btn, border_radius=20)
         self.screen.blit(back_text, back_text.get_rect(center=self.back_btn.center))
 
         pg.display.update()
@@ -281,13 +269,30 @@ class GameGUI:
         else:
             return
 
-        self.screen.fill(YELLOW)
+        self.screen.fill(constants.YELLOW)
         self.screen.blit(img, (100, 100))
 
-        self.back_stat_btn = pg.Rect(300, 520, 200, 40)
-        back_text = self.font.render("Back", True, YELLOW)
-        pg.draw.rect(self.screen, TEAL, self.back_stat_btn, border_radius=20)
+        self.back_graph_btn = pg.Rect(300, 520, 200, 40)
+        back_text = self.font.render("Back", True, constants.YELLOW)
+        pg.draw.rect(self.screen, constants.TEAL, self.back_graph_btn, border_radius=20)
+        self.screen.blit(back_text, back_text.get_rect(center=self.back_graph_btn.center))
+
+        pg.display.update()
+
+    def stat_screen(self):
+        self.current_screen = "stats"
+        self.screen.fill(constants.YELLOW)
+
+        self.graph.get_statistics()
+        img = pg.image.load("image/graphs/summary_table.png")
+        img = pg.transform.scale(img, (700, 500))
+        self.screen.blit(img, (50, 30))
+
+        self.back_stat_btn = pg.Rect(300, 540, 200, 40)
+        back_text = self.font.render("Back", True, constants.YELLOW)
+        pg.draw.rect(self.screen,constants.TEAL, self.back_stat_btn, border_radius=20)
         self.screen.blit(back_text, back_text.get_rect(center=self.back_stat_btn.center))
+        pg.display.update()
 
         pg.display.update()
 
@@ -302,6 +307,8 @@ class GameGUI:
                 self.running = False
             elif self.graph_btn.collidepoint(pos):
                 self.graph_screen()
+            elif self.stat_btn.collidepoint(pos):
+                self.stat_screen()
 
         elif self.current_screen in ["win", "game_over"]:
             if self.home_btn.collidepoint(pos):
@@ -310,13 +317,13 @@ class GameGUI:
                 self.home_screen()
 
         elif self.current_screen == "game":
-            for row in range(GRID_SIZE):
-                for col in range(GRID_SIZE):
+            for row in range(constants.GRID_SIZE):
+                for col in range(constants.GRID_SIZE):
                     tile_rect = pg.Rect(
-                        self.grid_start_x + row * (TILE_SIZE + 5),
-                        self.grid_start_y + col * (TILE_SIZE + 5),
-                        TILE_SIZE,
-                        TILE_SIZE,
+                        self.grid_start_x + row * (constants.TILE_SIZE + 5),
+                        self.grid_start_y + col * (constants.TILE_SIZE + 5),
+                        constants.TILE_SIZE,
+                        constants.TILE_SIZE,
                     )
                     if tile_rect.collidepoint(pos) and not self.tile_states[row][col]:
                         self.player.increment_move()
@@ -341,9 +348,13 @@ class GameGUI:
             elif self.back_btn.collidepoint(pos):
                 self.current_screen = "home"
                 self.home_screen()
-            elif self.back_stat_btn.collidepoint(pos):
+            elif self.back_graph_btn.collidepoint(pos):
                 self.current_screen = "graph"
                 self.graph_screen()
+        elif self.current_screen == "stats":
+            if self.back_stat_btn.collidepoint(pos):
+                self.current_screen = "home"
+                self.home_screen()
 
     def game_loop(self):
         while self.running:
