@@ -19,7 +19,7 @@ class GameGUI:
         self.current_screen = "home"
         self.player = Player()
         self.board = Board()
-        self.graph = Visualizer()
+        self.visualizer = Visualizer()
 
         self.tile_states = [[False for _ in range(constants.GRID_SIZE)] for _ in range(constants.GRID_SIZE)]
         self.font = pg.font.Font("font/PixeloidMono.ttf", 25)
@@ -280,7 +280,7 @@ class GameGUI:
         self.current_screen = "stats"
         self.screen.fill(constants.YELLOW)
 
-        self.graph.statistics_table()
+        self.visualizer.statistics_table()
         img = pg.image.load("image/graphs/summary_table.png")
         img = pg.transform.scale(img, (700, 500))
         self.screen.blit(img, (50, 30))
@@ -311,7 +311,7 @@ class GameGUI:
             if self.home_btn.collidepoint(pos):
                 self.current_screen = "home"
                 self.game_started = False
-                self.graph = Visualizer()
+                self.visualizer = Visualizer()
                 self.home_screen()
 
         elif self.current_screen == "game":
@@ -329,19 +329,19 @@ class GameGUI:
 
         elif self.current_screen == "graph":
             if self.move_hist_btn.collidepoint(pos):
-                self.graph.histogram_moves()
+                self.visualizer.histogram_moves()
                 self.show_graph("histogram_moves")
             elif self.hearts_bar_btn.collidepoint(pos):
-                self.graph.bar_hearts_lost()
+                self.visualizer.bar_hearts_lost()
                 self.show_graph("bar_hearts_lost")
             elif self.time_box_btn.collidepoint(pos):
-                self.graph.box_time_taken()
+                self.visualizer.box_time_taken()
                 self.show_graph("box_time_taken")
             elif self.countdown_pie_btn.collidepoint(pos):
-                self.graph.pie_countdown_fail()
+                self.visualizer.pie_countdown_fail()
                 self.show_graph("pie_countdown_fail")
             elif self.win_loss_pie_btn.collidepoint(pos):
-                self.graph.pie_win_loss()
+                self.visualizer.pie_win_loss()
                 self.show_graph("pie_win_loss")
             elif self.back_btn.collidepoint(pos):
                 self.current_screen = "home"
