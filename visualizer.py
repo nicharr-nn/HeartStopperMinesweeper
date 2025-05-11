@@ -2,7 +2,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-
 class Visualizer:
     def __init__(self):
         self.df = pd.read_csv("game_results.csv")
