@@ -7,7 +7,7 @@ class Visualizer:
     def __init__(self):
         self.df = pd.read_csv("game_results.csv")
 
-    def get_statistics(self):
+    def statistics_table(self):
         features = {
             'Total Moves': 'Total moves taken',
             'Hearts Lost': 'Hearts lost',
