@@ -4,9 +4,8 @@ import seaborn as sns
 
 
 class Visualizer:
-    def __init__(self, title=None):
+    def __init__(self):
         self.df = pd.read_csv("game_results.csv")
-        self.title = title
 
     def get_statistics(self):
         features = {
