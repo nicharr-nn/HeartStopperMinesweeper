@@ -1,6 +1,8 @@
 # HeartStopperMinesweeper
 This project is an enhanced version of the Minesweeper game with new bomb mechanics and a life system. The life system consists of multiple lives, allowing the player to step on a bomb with a chance of surviving.  This project introduces two new types of bombs: the Heart Drain Bomb and the Countdown Bomb.
 
+![Welcome](screenshots/gameplay/menu_page.png)
+
 ## Game Concept
 Players start with three hearts and there will be 15 bombs on the board. If a player steps on a bomb, it will cause different unique effects:
 - <img src="image/classic.png" alt="Classic Bomb" width="20" height="20"> Classic Bomb: The game is over instantly.
