@@ -1,10 +1,9 @@
-from tile import Tile
-from bomb import ClassicBomb, HeartDrainBomb, CountdownBomb
 import random
 import constants
+from tile import Tile
+from bomb import ClassicBomb, HeartDrainBomb, CountdownBomb
 
 class Board:
-
     def __init__(self):
         self.grid = self.initial_grid()
 
@@ -13,7 +12,7 @@ class Board:
         grid = []
         for row in range(constants.GRID_SIZE):
             grid.append([])
-            for col in range(constants.GRID_SIZE):
+            for _ in range(constants.GRID_SIZE):
                 grid[row].append(Tile())
         return grid
 
@@ -41,7 +40,8 @@ class Board:
     def generate_bomb(self, classic_img, heart_drain_img, countdown_img):
         bomb_classes = [ClassicBomb, HeartDrainBomb, CountdownBomb]
         bomb_counts = [3, 8, 4]
-        positions = random.sample(range(constants.GRID_SIZE * constants.GRID_SIZE), sum(bomb_counts))
+        positions = random.sample(range(constants.GRID_SIZE * constants.GRID_SIZE),
+                                  sum(bomb_counts))
 
         for bomb_cls, count in zip(bomb_classes, bomb_counts):
             for _ in range(count):
