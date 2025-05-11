@@ -48,22 +48,19 @@ class GameGUI:
         stat_txt = self.font.render("Statistics", True, constants.YELLOW)
         quit_txt = self.font.render("Quit", True, constants.YELLOW)
 
-        self.start_btn = pg.Rect(300, 220, 200, 50)
-        self.graph_btn = pg.Rect(300, 280, 200, 50)
-        self.stat_btn = pg.Rect(300, 340, 200, 50)
-        self.quit_btn = pg.Rect(300, 400, 200, 50)
+        self.start_btn = pg.Rect(300, 250, 200, 50)
+        self.graph_btn = pg.Rect(300, 320, 200, 50)
+        self.quit_btn = pg.Rect(300, 390, 200, 50)
 
         self.__screen.blit(welcome, welcome.get_rect(center=(400, 180)))
 
         pg.draw.rect(self.__screen, constants.TEAL, self.start_btn, border_radius=20)
         pg.draw.rect(self.__screen, constants.TEAL, self.quit_btn, border_radius=20)
         pg.draw.rect(self.__screen, constants.TEAL, self.graph_btn, border_radius=20)
-        pg.draw.rect(self.__screen, constants.TEAL, self.stat_btn, border_radius=20)
 
         self.__screen.blit(start_txt, start_txt.get_rect(center=self.start_btn.center))
         self.__screen.blit(quit_txt, quit_txt.get_rect(center=self.quit_btn.center))
         self.__screen.blit(graph_txt, graph_txt.get_rect(center=self.graph_btn.center))
-        self.__screen.blit(stat_txt, stat_txt.get_rect(center=self.stat_btn.center))
 
         pg.display.update()
 
@@ -210,38 +207,43 @@ class GameGUI:
             writer = csv.writer(file)
             writer.writerow([next_id, self.player.move_count, 3 - self.player.hearts, self.time_taken, self.__fail_reason, result])
 
-    def graph_screen(self):
-        self.current_screen = "graph"
+    def visualize_screen(self):
+        self.current_screen = "visualize"
         self.__screen.fill(constants.YELLOW)
         pg.draw.rect(self.__screen, constants.WHITE, pg.Rect(100, 100, 600, 400), border_radius=50)
 
+        stat_txt = self.font.render("Statistics Summary", True, constants.YELLOW)
+        self.stat_btn = pg.Rect(175, 130, 450, 40)
+        pg.draw.rect(self.__screen, constants.TEAL, self.stat_btn, border_radius=20)
+        self.__screen.blit(stat_txt, stat_txt.get_rect(center=self.stat_btn.center))
+
         move_hist = self.font.render("Move Count Histogram", True, constants.YELLOW)
-        self.move_hist_btn = pg.Rect(175, 150, 450, 40)
+        self.move_hist_btn = pg.Rect(175, 180, 450, 40)
         pg.draw.rect(self.__screen, constants.TEAL, self.move_hist_btn, border_radius=20)
         self.__screen.blit(move_hist, move_hist.get_rect(center=self.move_hist_btn.center))
 
         hearts_bar = self.font.render("Hearts Lost Bar Chart", True, constants.YELLOW)
-        self.hearts_bar_btn = pg.Rect(175, 200, 450, 40)
+        self.hearts_bar_btn = pg.Rect(175, 230, 450, 40)
         pg.draw.rect(self.__screen, constants.TEAL, self.hearts_bar_btn, border_radius=20)
         self.__screen.blit(hearts_bar, hearts_bar.get_rect(center=self.hearts_bar_btn.center))
 
         time_box = self.font.render("Time Taken Box Plot", True, constants.YELLOW)
-        self.time_box_btn = pg.Rect(175, 250, 450, 40)
+        self.time_box_btn = pg.Rect(175, 280, 450, 40)
         pg.draw.rect(self.__screen, constants.TEAL, self.time_box_btn, border_radius=20)
         self.__screen.blit(time_box, time_box.get_rect(center=self.time_box_btn.center))
 
         countdown_pie = self.font.render("Countdown Bomb Pie Chart", True, constants.YELLOW)
-        self.countdown_pie_btn = pg.Rect(175, 300, 450, 40)
+        self.countdown_pie_btn = pg.Rect(175, 330, 450, 40)
         pg.draw.rect(self.__screen, constants.TEAL, self.countdown_pie_btn, border_radius=20)
         self.__screen.blit(countdown_pie, countdown_pie.get_rect(center=self.countdown_pie_btn.center))
 
         win_loss_pie = self.font.render("Win/Loss Pie Chart", True, constants.YELLOW)
-        self.win_loss_pie_btn = pg.Rect(175, 350, 450, 40)
+        self.win_loss_pie_btn = pg.Rect(175, 380, 450, 40)
         pg.draw.rect(self.__screen, constants.TEAL, self.win_loss_pie_btn, border_radius=20)
         self.__screen.blit(win_loss_pie, win_loss_pie.get_rect(center=self.win_loss_pie_btn.center))
 
         back_text = self.font.render("Back", True, constants.YELLOW)
-        self.back_btn = pg.Rect(175, 400, 450, 40)
+        self.back_btn = pg.Rect(175, 430, 450, 40)
         pg.draw.rect(self.__screen, constants.TEAL, self.back_btn, border_radius=20)
         self.__screen.blit(back_text, back_text.get_rect(center=self.back_btn.center))
 
@@ -277,7 +279,6 @@ class GameGUI:
         pg.display.update()
 
     def stat_screen(self):
-        self.current_screen = "stats"
         self.__screen.fill(constants.YELLOW)
 
         self.visualizer.statistics_table()
@@ -285,11 +286,10 @@ class GameGUI:
         img = pg.transform.scale(img, (700, 500))
         self.__screen.blit(img, (50, 30))
 
-        self.back_stat_btn = pg.Rect(300, 540, 200, 40)
+        self.back_graph_btn = pg.Rect(300, 540, 200, 40)
         back_text = self.font.render("Back", True, constants.YELLOW)
-        pg.draw.rect(self.__screen, constants.TEAL, self.back_stat_btn, border_radius=20)
-        self.__screen.blit(back_text, back_text.get_rect(center=self.back_stat_btn.center))
-        pg.display.update()
+        pg.draw.rect(self.__screen, constants.TEAL, self.back_graph_btn, border_radius=20)
+        self.__screen.blit(back_text, back_text.get_rect(center=self.back_graph_btn.center))
 
         pg.display.update()
 
@@ -303,9 +303,7 @@ class GameGUI:
             elif self.quit_btn.collidepoint(pos):
                 self.running = False
             elif self.graph_btn.collidepoint(pos):
-                self.graph_screen()
-            elif self.stat_btn.collidepoint(pos):
-                self.stat_screen()
+                self.visualize_screen()
 
         elif self.current_screen in ["win", "game_over"]:
             if self.home_btn.collidepoint(pos):
@@ -327,7 +325,7 @@ class GameGUI:
                         self.player.increment_move()
                         self.reveal_tile(row, col)
 
-        elif self.current_screen == "graph":
+        elif self.current_screen == "visualize":
             if self.move_hist_btn.collidepoint(pos):
                 self.visualizer.histogram_moves()
                 self.show_graph("histogram_moves")
@@ -346,13 +344,11 @@ class GameGUI:
             elif self.back_btn.collidepoint(pos):
                 self.current_screen = "home"
                 self.home_screen()
+            elif self.stat_btn.collidepoint(pos):
+                self.stat_screen()
             elif self.back_graph_btn.collidepoint(pos):
-                self.current_screen = "graph"
-                self.graph_screen()
-        elif self.current_screen == "stats":
-            if self.back_stat_btn.collidepoint(pos):
-                self.current_screen = "home"
-                self.home_screen()
+                self.current_screen = "visualize"
+                self.visualize_screen()
 
     def game_loop(self):
         while self.running:
