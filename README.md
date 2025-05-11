@@ -12,10 +12,6 @@ To win the game, the player must reveal all non-bomb tiles by clicking on them b
 ## Python Version
 Requires Python >= 3.10
 
-## Current Features
-- The game can be played with different bomb types (Classic Bomb, Heart Drain Bomb, and Countdown Bomb) and includes a life system with multiple hearts.
-- Game-over conditions are based on hearts and a countdown timer, while win conditions are based on revealing all non-bomb tiles.
-
 ## How to run the application
 1. Clone the repository
 ```bash
