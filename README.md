@@ -48,3 +48,7 @@ pip install -r requirements.txt
 ```bash
 python main.py
 ```
+or (MacOS)
+```bash
+python3 main.py
+```
