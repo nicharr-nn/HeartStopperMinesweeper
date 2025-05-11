@@ -12,5 +12,17 @@ To win the game, the player must reveal all non-bomb tiles by clicking on them b
 # UML Class Diagram
 ![UML](image/UML.png)
 
+# Class Responsibility
+| **Class Name** | **Responsibilities**                                                                                     |
+|----------------|----------------------------------------------------------------------------------------------------------|
+| GameGUI        | Handles the user interface and game display. Manages rendering, event handling, and player interactions. |
+| Player         | Tracks player hearts, interactions, and status.                                                          |
+| Board          | Manage tile grid, bomb placement, and game logic.                                                        |
+| Tile           | Represents a single tile in the grid. Stores bomb presence, bomb type, and number of adjacent bombs.     |
+| Bomb           | Abstract base class for bomb types.                                                                      |
+| Visualizer     | Generates visual summaries. Produces graphs and statistics tables.                                       |
+
+
+
 # Youtube
 
