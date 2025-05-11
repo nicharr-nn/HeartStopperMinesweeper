@@ -284,10 +284,10 @@ class GameGUI:
         self.screen.fill(YELLOW)
         self.screen.blit(img, (100, 100))
 
-        self.back_btn = pg.Rect(300, 520, 200, 40)
+        self.back_stat_btn = pg.Rect(300, 520, 200, 40)
         back_text = self.font.render("Back", True, YELLOW)
-        pg.draw.rect(self.screen, TEAL, self.back_btn, border_radius=20)
-        self.screen.blit(back_text, back_text.get_rect(center=self.back_btn.center))
+        pg.draw.rect(self.screen, TEAL, self.back_stat_btn, border_radius=20)
+        self.screen.blit(back_text, back_text.get_rect(center=self.back_stat_btn.center))
 
         pg.display.update()
 
@@ -338,7 +338,11 @@ class GameGUI:
             elif self.win_loss_pie_btn.collidepoint(pos):
                 self.graph.pie_win_loss()
                 self.show_graph("pie_win_loss")
-            elif hasattr(self, 'back_btn') and self.back_btn.collidepoint(pos):
+            elif self.back_btn.collidepoint(pos):
+                self.current_screen = "home"
+                self.home_screen()
+            elif self.back_stat_btn.collidepoint(pos):
+                self.current_screen = "graph"
                 self.graph_screen()
 
     def game_loop(self):
