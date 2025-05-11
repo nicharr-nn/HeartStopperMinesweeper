@@ -56,7 +56,6 @@ class Visualizer:
 
         plt.figtext(
             0.5, 0.05,
-            f"Additional Statistics:\n"
             f"Countdown Bomb Failures: {countdown_pct}%\n"
             f"Win/Loss Ratio: {win_pct}% / {loss_pct}%",
             ha='center', fontsize=10, bbox=None
