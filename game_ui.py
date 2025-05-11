@@ -36,8 +36,6 @@ class GameGUI:
         self.grid_start_x = (750 - constants.GRID_SIZE * constants.TILE_SIZE) // 2
         self.grid_start_y = (600 - constants.GRID_SIZE * constants.TILE_SIZE) // 2
 
-        self.bookmarked_tiles = [[False for _ in range(constants.GRID_SIZE)] for _ in range(constants.GRID_SIZE)]
-
         self.home_screen()
 
     def home_screen(self):
@@ -193,7 +191,6 @@ class GameGUI:
         self.board.generate_bomb(self.classic_bomb_img, self.heartdrain_bomb_img, self.countdown_bomb_img)
         self.board.set_surrounding_bombs()
         self.tile_states = [[False for _ in range(constants.GRID_SIZE)] for _ in range(constants.GRID_SIZE)]
-        self.bookmarked_tiles = [[False for _ in range(constants.GRID_SIZE)] for _ in range(constants.GRID_SIZE)]
         self.game_started = False
 
     def game_result_data(self, result):
@@ -283,7 +280,7 @@ class GameGUI:
         self.current_screen = "stats"
         self.screen.fill(constants.YELLOW)
 
-        self.graph.get_statistics()
+        self.graph.statistics_table()
         img = pg.image.load("image/graphs/summary_table.png")
         img = pg.transform.scale(img, (700, 500))
         self.screen.blit(img, (50, 30))
@@ -314,6 +311,7 @@ class GameGUI:
             if self.home_btn.collidepoint(pos):
                 self.current_screen = "home"
                 self.game_started = False
+                self.graph = Visualizer()
                 self.home_screen()
 
         elif self.current_screen == "game":
