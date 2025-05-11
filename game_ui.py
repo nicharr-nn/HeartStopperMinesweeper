@@ -44,13 +44,12 @@ class GameGUI:
         pg.draw.rect(self.__screen, constants.WHITE, pg.Rect(100, 100, 600, 400), border_radius=50)
         welcome = self.title_font.render("Welcome!", True, constants.DARK_TEAL)
         start_txt = self.font.render("Start", True, constants.YELLOW)
-        graph_txt = self.font.render("Graphs", True, constants.YELLOW)
-        stat_txt = self.font.render("Statistics", True, constants.YELLOW)
+        graph_txt = self.font.render("Visualization", True, constants.YELLOW)
         quit_txt = self.font.render("Quit", True, constants.YELLOW)
 
-        self.start_btn = pg.Rect(300, 250, 200, 50)
-        self.graph_btn = pg.Rect(300, 320, 200, 50)
-        self.quit_btn = pg.Rect(300, 390, 200, 50)
+        self.start_btn = pg.Rect(250, 250, 300, 50)
+        self.graph_btn = pg.Rect(250, 320, 300, 50)
+        self.quit_btn = pg.Rect(250, 390, 300, 50)
 
         self.__screen.blit(welcome, welcome.get_rect(center=(400, 180)))
 
