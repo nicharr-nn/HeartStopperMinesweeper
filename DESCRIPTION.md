@@ -9,7 +9,8 @@ Players start with three hearts and there will be 15 bombs on the board. If a pl
 
 To win the game, the player must reveal all non-bomb tiles by clicking on them before running out of hearts or time.
 
-# UML
+# UML Class Diagram
+![UML](image/uml.png)
 
 # Youtube
 
