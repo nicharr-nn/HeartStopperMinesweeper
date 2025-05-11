@@ -22,7 +22,8 @@ To win the game, the player must reveal all non-bomb tiles by clicking on them b
 | Bomb           | Abstract base class for bomb types.                                                                      |
 | Visualizer     | Generates visual summaries. Produces graphs and statistics tables.                                       |
 
-
-
 # Youtube
 [Link](https://youtu.be/at2vWlNWSYY)
+
+# Proposal
+[Link](https://drive.google.com/file/d/1AA6IrNITFUoffsFquPtr09E6GohyyJWH/view?usp=sharing)
