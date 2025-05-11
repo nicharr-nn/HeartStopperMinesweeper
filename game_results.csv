@@ -64,3 +64,10 @@ ID,Total moves taken,Hearts lost,Time,Fail reason,Result
 64,20,3,40,HeartDrainBomb,lose
 65,21,3,19,HeartDrainBomb,lose
 66,17,3,19,ClassicBomb,lose
+67,6,3,4,ClassicBomb,lose
+68,9,3,30,CountdownBomb,lose
+69,7,3,3,ClassicBomb,lose
+70,28,3,46,HeartDrainBomb,lose
+71,12,3,14,HeartDrainBomb,lose
+72,15,3,39,CountdownBomb,lose
+73,4,3,3,ClassicBomb,lose
