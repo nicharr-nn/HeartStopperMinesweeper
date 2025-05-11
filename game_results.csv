@@ -71,3 +71,8 @@ ID,Total moves taken,Hearts lost,Time,Fail reason,Result
 71,12,3,14,HeartDrainBomb,lose
 72,15,3,39,CountdownBomb,lose
 73,4,3,3,ClassicBomb,lose
+74,18,3,17,ClassicBomb,lose
+75,8,3,4,ClassicBomb,lose
+76,27,3,31,HeartDrainBomb,lose
+77,17,3,44,CountdownBomb,lose
+78,13,3,11,HeartDrainBomb,lose
