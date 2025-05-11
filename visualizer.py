@@ -77,7 +77,7 @@ class Visualizer:
 
     def bar_hearts_lost(self):
         plt.figure(figsize=(6, 4))
-        sns.countplot(x="Hearts lost", data=self.df, palette="Reds", legend=False)
+        sns.countplot(x="Hearts lost", hue="Hearts lost", data=self.df, palette="Reds", legend=False)
         plt.title("Hearts Lost per Game")
         plt.xlabel("Hearts Lost")
         plt.ylabel("Count")
